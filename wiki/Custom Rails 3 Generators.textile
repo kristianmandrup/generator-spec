@@ -1,0 +1,110 @@
+h2. Custom generators
+
+<pre>
+# my_plugin/lib/generators/install_generator.rb
+module MyGem
+  class InstallGenerator < Rails::Generators::Base
+    source_root File.expand_path("../templates", __FILE__)
+
+    # all public methods in here will be run in order
+    def add_my_initializer
+      template "initializer.rb", "config/initializers/my_gem_initializer.rb"
+    end
+  end
+end  
+</pre>
+
+If you inherit from NamedBase, you will have access to several inflections of the name passed in both in the body of your generator class, as well as in your templates.
+
+* class_path and file_name are extracted from the name passed in. For instance, if the user passes in admin/posts, the class_path is admin and the file_name is posts
+* file_path is the class_path and file_name joined by /
+* class_name is the file_path, camelized. For instance, admin/posts becomes Admin::Posts
+* human_name is the file_name, humanized. For instance, admin_posts would become Admin posts
+* plural_name is the file_name, pluralized. For instance, post becomes posts
+* i18n_scope is the file_path, with / replaced with .. For instance, admin/posts becomes admin.posts
+
+<pre>
+# my_plugin/lib/generators/templates/initializer.rb
+Rails.application.configure do
+  # Uncomment this to turn on verbose mode
+  # config.my_gem.verbose = true
+end  
+</pre>
+  
+h2. Overriding and replacing built-in Rails 3 generator
+
+Simply inherit from the generator you want to replace and change the template source root to your own template directory
+<pre>
+require 'rails/generators/rails/scaffold_controller/scaffold_controller_generator'
+module Rails
+  module Generators
+    class RespondersControllerGenerator < ScaffoldControllerGenerator
+      def self.source_root
+        @_source_root ||= File.expand_path("templates", File.dirname(__FILE__))
+      end
+
+    protected
+
+      def flash?
+        !ApplicationController.responder.ancestors.include?(Responders::FlashResponder)
+      end
+    end
+  end
+end
+</pre>        
+
+To hook a generator into Rails scaffold, all you need to do is to create a Rails::Railtie, which was also introduced in Rails 3. 
+The responders gem *railtie* is only a few lines of code:
+
+<pre>
+module Responders
+  class Railtie < ::Rails::Railtie
+    config.responders = ActiveSupport::OrderedOptions.new
+    config.generators.scaffold_controller = :responders_controller # important! signifies override by ResponderControllerGenerator
+
+    initializer "responders.flash_responder" do |app|
+      if app.config.responders.flash_keys
+        Responders::FlashResponder.flash_keys = app.config.responders.flash_keys
+      end
+    end
+  end
+end
+</pre>
+
+The first line sets an instance of ActiveSupport::OrderedOptions at config.responders. This allows you to do the following inside your 
+Rails::Application at <code>config/application.rb</code>
+
+<pre>
+# config/application.rb
+module Rails
+  class Blog < Rails::Application
+    config.responders.flash_keys = [:success, :failure]
+  end
+end
+</pre>     
+
+The second line is where the generator configuration happens. In case you are wondering, the config.generators object available in 
+Rails::Railtie is exactly the same object as the one in our Rails::Application. 
+That said, any gem can configure and manipulate the whole generators workflow in the application.
+
+In Rails 3, gems are loaded before your application initializes. This is quite easy to notice if you look at the config/application.rb  file:
+
+<pre>
+# config/application.rb
+
+require File.expand_path('../boot', __FILE__)
+require 'rails/all'
+
+# If you have a Gemfile, require the gems listed there, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(:default, Rails.env) if defined?(Bundler)
+
+module Foo
+  class Application < Rails::Application
+</pre>
+
+By requiring gems earlier, Rails 3 can give more power to gems because we are sure that the final configuration value will be set by the application developer. The official API for configuring a Rails application is a Rails::Railtie as we just saw above. There is much more you can do inside a railtie, like configuring the middleware stack or any other Rails framework. Since all Rails frameworks (like Active Record, Active Resource, Action Pack…) are also railties, they are a great source of knowledge in case you are interested in learning more.
+
+If we want to customize the _form  partial generated on scaffold, all you need to do is to copy the _form  partial template from Rails source code to lib/templates/erb/scaffold/_form.html.erb.
+
+If you want to customize the show view, you just need to copy it as well, and this is true for all generators and all templates! This allows generators to grow and adapt as your application changes! For example, the simple form gem creates a template to change scaffold to use the simple_form_for instead of form_for.

@@ -1,0 +1,42 @@
+The Rails 3 spec helpers can be used to setup the temporary Rails 3 app used for the specs. 
+Use the `create` methods to setup an application layout of expected files expected/required by the generator to test it.
+
+The `remove` methods can be used to cleanup before or after a test run, f.ex using the RSpec `before(:each)` and `after(:each)` blocks.  
+
+h3. View helpers
+
+* create_view name, content
+* create_view name, &block
+* remove_view name
+* remove_views *names
+
+h3. Model helpers
+
+* create_model name, content
+* create_model name, &block
+* remove_model name
+* remove_models *names
+
+h3. Controller helpers
+
+* create_controller name, content
+* create_controller name, &block
+* remove_controller name
+* remove_controller *names
+
+h3. Mailer helpers
+
+* create_mailer name, content
+* create_mailer name, &block
+* remove_mailer name
+* remove_mailers *names
+
+h3. Helper helpers
+
+* create_helper name, content
+* create_helper name, &block
+* remove_helper name
+* remove_helpers *names
+
+
+

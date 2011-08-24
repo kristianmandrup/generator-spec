@@ -1,0 +1,72 @@
+The RSpec 2 generator matchers are used to match on file content that are the result of running the generator under test. 
+These matchers can be used to test if the resulting file contains content/ruby code as expected (or specified).  
+
+* have_class name, &block
+* have_module name, &block
+* have_method name, &block, type:Symbol (:class)
+* include_module name
+* inherit_from name, &block
+* have_call name, [args]
+* have_block name, [options] 
+
+h3. Example use of matchers
+
+<pre>
+g.should generate_model name do |content|
+  content.should have_class name do |klass_content|
+    klass_content.should include_module 'Canable::Ables'
+  end
+end
+</pre>
+
+h4. have_class
+
+<pre>have_class MyClass do |class_content|
+  class_content.should ...
+end
+</pre>
+
+h4. have_module
+
+<pre>have_module MyModule do |module_content|
+  module_content.should ...
+end
+</pre>
+
+h4. have_method
+
+<pre>have_method :song do |song|
+  song.should ...
+end
+</pre>
+
+h4. have_method
+
+<pre>have_method :song do |song|
+  song.should ...
+end
+</pre>
+
+h4. include_module
+
+<pre>include_module 'UserRoles'</pre>
+
+h4. inherit_from
+
+<pre>inherit_from 'ActiveRecord::Base' do |klass|
+  klass.should ...
+end
+</pre>
+
+h4. have_call
+
+<pre>have_call 'move', :args => ':north'</pre>
+
+Note: Currently not tested. Any issues?
+
+h4. have_block
+
+<pre>have_block 'move', :args => ':north', :block_args => 'place'</pre>
+
+Note: Currently not tested. Any issues?
+

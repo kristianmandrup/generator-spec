@@ -1,0 +1,96 @@
+h2. Migration file
+
+There are a bunch of ways to match the layout of a generated migration file as the following demonstrates.
+
+* Matchers
+* Helper methods
+
+h3. Matchers
+
+Example use
+<pre>
+g.should have_migration(:create_users) do |content|
+  content.should have_up do |up|
+    up.should create_table(:users) do |table|
+      table.should add_column(:name, :string)
+    end
+  end
+end 
+</pre>
+
+Migration class matcher
+
+* have_migration name, &block
+
+Up and Down method matchers
+
+* have_up, &block
+* have_down, &block
+
+Table matchers
+
+* have_create_table name, &block
+* have_change_table name, &block
+* have_drop_table name
+* have_rename_table name, new_name
+
+Column matchers
+
+* have_remove_column name
+* have_add_column name, type='string'
+* have_change_column name, type='string'
+* have_add_tbl_column tbl_name, name, type='string'
+
+Table column matchers
+
+* have_change_tbl_column tbl_name, name, type='string'
+* have_rename_tbl_column tbl_name, new_name
+* have_remove_tbl_column tbl_name, name
+
+h3. Helper methods
+
+Example use
+<pre>
+g.migration :create_users do |content|
+  file_content.up do |up|
+    up.creates_table :users do |table|
+      table.adds_column :name, :string
+    end
+  end
+end 
+</pre>
+
+
+Check named migration file exists and yields content of file
+* migration file_name, &block
+
+Checks class method 'up' exists and yields content of method
+* up &block
+
+Checks class method 'down' exists and yields content of method
+* down &block
+
+Check specific block exists and yields content of block 
+
+* creates_table name, &block
+* changes_table name, &block
+
+Test specific migration statements exist within table block
+
+* drops_table name
+* renames_table name
+* removes_column name
+* adds_column name, type='string'
+* changes_column name, type='string'
+
+Test that migration statements exist that apply to a specific table
+
+* adds_tbl_column tbl_name, name, type='string'
+* changes_tbl_column tbl_name, name, type='string'
+* renames_tbl_column tbl_name, new_name
+* removes_tbl_column tbl_name, name
+
+Check Index statements
+
+* adds_tbl_index tbl_name, name
+* removes_tbl_index tbl_name, name

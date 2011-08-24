@@ -1,0 +1,17 @@
+* generate_file name, type:Symbol, &block
+* generate_dir name, type:Symbol, &block
+
+*generate_file* can take any of the symbols below as a type argument and perform matchings on 
+that file in the appropriate location for that type of file in the Rails 3 app.
+
+* :model, :controller, :view, :helper, :observer, :migration
+* :javascript, :stylesheet, :initializer, :locale
+
+The following are some convenience matchers that acts as wrappers on generate_file
+
+* generate_model name, &block
+* generate_controller name, &block
+* generate_helper name, &block
+* generate_view name, &block
+* generate_observer name, &block
+* generate_migration name, &block
