@@ -6,8 +6,8 @@ gem "rails",             ">= 3.0.1"
 gem "test-unit",         ">= 2.0.1"
 
 gem "require_all",       "~> 1.2.0"
-gem "sugar-high",        ">= 0.5.0"
-gem "rails_artifactor",  ">= 0.4.0"
+gem "sugar-high",        ">= 0.6.0"
+gem "rails_artifactor",  ">= 0.5.0"
 
 group :development do
   gem "mocha",             ">= 0.9.8"
