@@ -11,9 +11,7 @@ gem "rails_artifactor",  ">= 0.5.0"
 
 group :development do
   gem "mocha",             ">= 0.9.8"
-  gem 'logging_assist',    "~> 0.2.2"
 
-  gem "rspec",    ">= 2.4.0"
   gem "bundler",  ">= 1.0.1"
   gem "jeweler",  ">= 1.6.4"
   gem "rcov",     ">= 0"
