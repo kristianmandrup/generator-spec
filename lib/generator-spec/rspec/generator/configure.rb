@@ -1,17 +1,17 @@
-module RSpec::Generator  
+module RSpec::Generator
   def self.configure &block
     conf = RSpec::Generator::Configure
     if block
       block.arity < 1 ? conf.instance_eval(&block) : block.call(conf, self)  
-    end      
+    end
   end
-  
+
   module Configure
     class << self
       def remove_temp_dir= bool
         RSpec::Generator.remove_temp_dir = bool
-      end  
-      
+      end
+
       def debug= bool
         RSpec::Generator.debug = bool
       end
@@ -30,21 +30,21 @@ module RSpec::Generator
 
       def logger= type
         case type
-        when Symbol          
-          raise ArgumentError, "Unknown logger type #{type}" if ![:stdout, :file].include?(type)            
+        when Symbol
+          raise ArgumentError, "Unknown logger type #{type}" if ![:stdout, :file].include?(type)
           RSpec::Generator.logger = type
         when Hash
           RSpec::Generator.logger = type
-        else 
+        else
           raise ArgumentError, "Unknown logger type #{type.inspect}, must be set as Symbol :stdout, :file or Hash (for advanced configuration)"
-        end        
+        end
       end
 
       protected
 
       def configure_root_dir path, options = {}
         ::Rails.application.configure do
-          config.root_dir = options == :custom ? TmpRails.root_dir(File.dirname(path) + '/../tmp', :custom) : TmpRails.root_dir(path)          
+          config.root_dir = options == :custom ? TmpRails.root_dir(File.dirname(path) + '/../tmp', :custom) : TmpRails.root_dir(path)
         end
 
         gen = RSpec::Generator
@@ -53,11 +53,11 @@ module RSpec::Generator
           config.after(:suite) do
             gen.remove_rails_dir! if gen.remove_temp_dir
           end
-        end        
+        end
 
-        ::RSpec::Generator::TestCase.destination ::Rails.root      
-        ::Rails::Generators.configure!         
+        ::RSpec::Generator::TestCase.destination ::Rails.root
+        ::Rails::Generators.configure!
       end
     end
-  end  # Configure  
+  end  # Configure
 end
